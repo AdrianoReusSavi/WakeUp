@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             // Stop the current recording session.
             curRecording.stop()
             recording = null
-            viewBinding.btHistoric.isActivated = true
+            viewBinding.btHistoric.isActivated = false
             return
         }
 
@@ -94,14 +94,6 @@ class MainActivity : AppCompatActivity() {
             .build()
         recording = videoCapture.output
             .prepareRecording(this, mediaStoreOutputOptions)
-            .apply {
-                if (PermissionChecker.checkSelfPermission(this@MainActivity,
-                        Manifest.permission.RECORD_AUDIO) ==
-                    PermissionChecker.PERMISSION_GRANTED)
-                {
-                    withAudioEnabled()
-                }
-            }
             .start(ContextCompat.getMainExecutor(this)) { recordEvent ->
                 when(recordEvent) {
                     is VideoRecordEvent.Start -> {
@@ -162,7 +154,7 @@ class MainActivity : AppCompatActivity() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview)
+                    this, cameraSelector, preview, videoCapture)
 
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
