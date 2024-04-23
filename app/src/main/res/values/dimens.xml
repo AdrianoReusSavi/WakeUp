@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="button_50">50dp</dimen>
+    <dimen name="button_100">100dp</dimen>
+    <dimen name="button_150">150dp</dimen>
+</resources>

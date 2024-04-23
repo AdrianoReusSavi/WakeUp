@@ -13,12 +13,33 @@
         android:layout_height="match_parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/bt_alarm1"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="25dp"
+        android:layout_gravity="top|start"
+        android:contentDescription="@string/historic"
+        app:backgroundTint="@color/blue"
+        android:visibility="invisible" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/bt_alarm2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="25dp"
+        android:layout_gravity="top|end"
+        android:contentDescription="@string/historic"
+        app:backgroundTint="@color/yellow"
+        android:visibility="invisible" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/bt_video_start"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_gravity="center_vertical|center"
+        android:layout_marginBottom="100dp"
+        android:layout_gravity="bottom|center"
         android:contentDescription="@string/start_capture"
-        app:backgroundTint="@color/red"/>
+        app:backgroundTint="@color/red" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/bt_historic"
@@ -27,5 +48,5 @@
         android:layout_margin="25dp"
         android:layout_gravity="bottom|start"
         android:contentDescription="@string/historic"
-        app:backgroundTint="@color/white"/>
+        app:backgroundTint="@color/white" />
 </FrameLayout>
