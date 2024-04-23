@@ -5,6 +5,9 @@ import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.media.Ringtone
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -23,18 +26,17 @@ import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
 import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import androidx.core.view.isVisible
 import com.ars.wakeup.databinding.ActivityMainBinding
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.SimpleDateFormat
 import java.util.Locale
-
-//typealias LumaListener = (luma: Double) -> Unit
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
-
+    private var ringtone: Ringtone? = null
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
 
@@ -60,6 +62,14 @@ class MainActivity : AppCompatActivity() {
         //}
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        viewBinding.btAlarm1.setOnClickListener {
+            toggleAlarm(viewBinding.btAlarm1, RingtoneManager.TYPE_NOTIFICATION)
+        }
+
+        viewBinding.btAlarm2.setOnClickListener {
+            toggleAlarm(viewBinding.btAlarm2, RingtoneManager.TYPE_ALARM)
+        }
     }
 
     private fun captureVideo() {
@@ -73,7 +83,6 @@ class MainActivity : AppCompatActivity() {
             // Stop the current recording session.
             curRecording.stop()
             recording = null
-            viewBinding.btHistoric.isActivated = false
             return
         }
 
@@ -97,9 +106,22 @@ class MainActivity : AppCompatActivity() {
             .start(ContextCompat.getMainExecutor(this)) { recordEvent ->
                 when(recordEvent) {
                     is VideoRecordEvent.Start -> {
+
+                        viewBinding.btHistoric.apply {
+                            isVisible = false
+                        }
+                        viewBinding.btAlarm1.apply {
+                            isVisible = true
+                        }
+                        viewBinding.btAlarm2.apply {
+                            isVisible = true
+                        }
+
                         viewBinding.btVideoStart.apply {
                             contentDescription = getString(R.string.stop_capture)
                             backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green))
+                            layoutParams.width = resources.getDimensionPixelSize(R.dimen.button_100)
+                            layoutParams.height = resources.getDimensionPixelSize(R.dimen.button_100)
                             isEnabled = true
                         }
                     }
@@ -116,9 +138,22 @@ class MainActivity : AppCompatActivity() {
                             Log.e(TAG, "Video capture ends with error: " +
                                     "${recordEvent.error}")
                         }
+
+                        viewBinding.btHistoric.apply {
+                            isVisible = true
+                        }
+                        viewBinding.btAlarm1.apply {
+                            isVisible = false
+                        }
+                        viewBinding.btAlarm2.apply {
+                            isVisible = false
+                        }
+
                         viewBinding.btVideoStart.apply {
                             contentDescription = getString(R.string.start_capture)
                             backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red))
+                            layoutParams.width = resources.getDimensionPixelSize(R.dimen.button_150)
+                            layoutParams.height = resources.getDimensionPixelSize(R.dimen.button_150)
                             isEnabled = true
                         }
                     }
@@ -215,5 +250,25 @@ class MainActivity : AppCompatActivity() {
         builder.setView(dialogView)
         val alertDialog = builder.create()
         alertDialog.show()
+    }
+
+    private fun toggleAlarm(button: FloatingActionButton, soundResource: Int) {
+        if (button.isActivated) {
+            stopAlarm()
+        } else {
+            startAlarm(soundResource)
+        }
+
+        button.isActivated = !button.isActivated
+    }
+
+    private fun startAlarm(soundResource: Int) {
+        val alarmSound = Uri.parse("android.resource://$packageName/$soundResource")
+        ringtone = RingtoneManager.getRingtone(applicationContext, alarmSound)
+        ringtone?.play()
+    }
+
+    private fun stopAlarm() {
+        ringtone?.stop()
     }
 }
