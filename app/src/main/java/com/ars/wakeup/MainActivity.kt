@@ -27,15 +27,25 @@ import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
+import com.ars.wakeup.data.WakeUpAdapter
+import com.ars.wakeup.database.AppDatabase
+import com.ars.wakeup.database.WakeUpHistory
 import com.ars.wakeup.databinding.ActivityMainBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
+    private lateinit var db: AppDatabase
+    private lateinit var wakeUpList: ArrayList<WakeUpHistory>
+    private lateinit var wakeUpAdapter: WakeUpAdapter
     private var ringtone: Ringtone? = null
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
@@ -57,11 +67,14 @@ class MainActivity : AppCompatActivity() {
         // Set up the listener for video capture button
         viewBinding.btVideoStart.setOnClickListener { captureVideo() }
 
-        //viewBinding.btHistoric.setOnClickListener {
-        //    showHistoricModal()
-        //}
+        viewBinding.btHistoric.setOnClickListener {
+            showHistoricModal()
+        }
 
+        wakeUpList = ArrayList()
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        initDatabase()
 
         viewBinding.btAlarm1.setOnClickListener {
             toggleAlarm(viewBinding.btAlarm1, RingtoneManager.TYPE_NOTIFICATION)
@@ -156,6 +169,16 @@ class MainActivity : AppCompatActivity() {
                             layoutParams.height = resources.getDimensionPixelSize(R.dimen.button_150)
                             isEnabled = true
                         }
+
+                        val qtd = if (wakeUpList.isNotEmpty()) wakeUpList.count() + 1 else 1
+                        // used to generate random values
+                        val wakeUpHistory = WakeUpHistory(id = qtd,
+                            dateStart = Date(System.currentTimeMillis()),
+                            dateEnd = Date(System.currentTimeMillis() + 60 * 60 * 1000),
+                            travelMinutes = kotlin.random.Random.nextInt(30, 1000),
+                            travelOccurrences = kotlin.random.Random.nextInt(1, 10))
+
+                        saveData(wakeUpHistory)
                     }
                 }
             }
@@ -246,10 +269,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun showHistoricModal() {
         val dialogView = layoutInflater.inflate(R.layout.historic_layout, null)
+
+        val rv = dialogView.findViewById<RecyclerView>(R.id.rv_history)
+        setupRecyclerView(rv)
+
         val builder = AlertDialog.Builder(this)
         builder.setView(dialogView)
         val alertDialog = builder.create()
         alertDialog.show()
+
+        loadData()
     }
 
     private fun toggleAlarm(button: FloatingActionButton, soundResource: Int) {
@@ -270,5 +299,31 @@ class MainActivity : AppCompatActivity() {
 
     private fun stopAlarm() {
         ringtone?.stop()
+    }
+
+    private fun initDatabase() {
+        db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "database-history"
+        )
+            .allowMainThreadQueries()
+            .build()
+    }
+
+    private fun setupRecyclerView(rv: RecyclerView) {
+        rv.layoutManager = LinearLayoutManager(this)
+
+        wakeUpList = ArrayList()
+        wakeUpAdapter = WakeUpAdapter(wakeUpList, 1)
+        rv.adapter = wakeUpAdapter
+    }
+
+    private fun loadData() {
+        wakeUpList.clear()
+        wakeUpList.addAll(db.wakeUpDao().getAll() as ArrayList<WakeUpHistory>)
+    }
+
+    private fun saveData(value: WakeUpHistory) {
+        db.wakeUpDao().insertAll(value)
     }
 }

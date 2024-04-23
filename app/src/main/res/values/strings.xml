@@ -3,4 +3,5 @@
     <string name="start_capture">Iniciar</string>
     <string name="stop_capture">Parar</string>
     <string name="historic">Histórico</string>
+    <string name="history">History</string>
 </resources>
