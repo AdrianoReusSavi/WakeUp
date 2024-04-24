@@ -12,40 +12,48 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <ImageButton
         android:id="@+id/bt_alarm1"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_margin="25dp"
+        android:src="@drawable/ic_music"
+        android:scaleType="fitCenter"
         android:layout_gravity="top|start"
-        android:contentDescription="@string/historic"
-        app:backgroundTint="@color/blue"
+        android:contentDescription="@string/alarm"
+        android:backgroundTint="@color/blue"
         android:visibility="invisible" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <ImageButton
         android:id="@+id/bt_alarm2"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_margin="25dp"
+        android:src="@drawable/ic_music"
+        android:scaleType="fitCenter"
         android:layout_gravity="top|end"
-        android:contentDescription="@string/historic"
-        app:backgroundTint="@color/yellow"
+        android:contentDescription="@string/alarm"
+        android:backgroundTint="@color/yellow"
         android:visibility="invisible" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <ImageButton
         android:id="@+id/bt_video_start"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginBottom="100dp"
+        android:src="@drawable/ic_start_video"
+        android:scaleType="fitCenter"
         android:layout_gravity="bottom|center"
-        android:contentDescription="@string/start_capture"
-        app:backgroundTint="@color/red" />
+        android:contentDescription="@string/video"
+        app:backgroundTint="@color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/bt_historic"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="25dp"
+        app:srcCompat="@drawable/ic_historic"
+        android:scaleType="fitCenter"
         android:layout_gravity="bottom|start"
         android:contentDescription="@string/historic"
         app:backgroundTint="@color/white" />
