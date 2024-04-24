@@ -4,12 +4,12 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -32,7 +32,6 @@ import com.ars.wakeup.data.WakeUpAdapter
 import com.ars.wakeup.database.AppDatabase
 import com.ars.wakeup.database.WakeUpHistory
 import com.ars.wakeup.databinding.ActivityMainBinding
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -130,7 +129,7 @@ class MainActivity : AppCompatActivity() {
 
                         viewBinding.btVideoStart.apply {
                             contentDescription = getString(R.string.stop_capture)
-                            backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green))
+                            setImageResource(R.drawable.ic_stop_video)
                             layoutParams.width = resources.getDimensionPixelSize(R.dimen.button_100)
                             layoutParams.height = resources.getDimensionPixelSize(R.dimen.button_100)
                             isEnabled = true
@@ -166,7 +165,7 @@ class MainActivity : AppCompatActivity() {
 
                         viewBinding.btVideoStart.apply {
                             contentDescription = getString(R.string.start_capture)
-                            backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red))
+                            setImageResource(R.drawable.ic_start_video)
                             layoutParams.width = resources.getDimensionPixelSize(R.dimen.button_150)
                             layoutParams.height = resources.getDimensionPixelSize(R.dimen.button_150)
                             isEnabled = true
@@ -283,7 +282,7 @@ class MainActivity : AppCompatActivity() {
         loadData()
     }
 
-    private fun toggleAlarm(button: FloatingActionButton, soundResource: Int) {
+    private fun toggleAlarm(button: ImageButton, soundResource: Int) {
         if (button.isActivated) {
             stopAlarm()
         } else {

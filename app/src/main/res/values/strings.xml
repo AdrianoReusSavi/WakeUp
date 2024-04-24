@@ -4,4 +4,6 @@
     <string name="stop_capture">Parar</string>
     <string name="historic">Histórico</string>
     <string name="history">History</string>
+    <string name="video">Vídeo</string>
+    <string name="alarm">Alarme</string>
 </resources>
