@@ -5,9 +5,7 @@ import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
-import android.media.Ringtone
-import android.media.RingtoneManager
-import android.net.Uri
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -46,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var db: AppDatabase
     private lateinit var wakeUpList: ArrayList<WakeUpHistory>
     private lateinit var wakeUpAdapter: WakeUpAdapter
-    private var ringtone: Ringtone? = null
+    private var mediaPlayer: MediaPlayer? = null
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
 
@@ -77,11 +75,11 @@ class MainActivity : AppCompatActivity() {
         initDatabase()
 
         viewBinding.btAlarm1.setOnClickListener {
-            toggleAlarm(viewBinding.btAlarm1, RingtoneManager.TYPE_NOTIFICATION)
+            toggleAlarm(viewBinding.btAlarm1, R.raw.music_1)
         }
 
         viewBinding.btAlarm2.setOnClickListener {
-            toggleAlarm(viewBinding.btAlarm2, RingtoneManager.TYPE_ALARM)
+            toggleAlarm(viewBinding.btAlarm2, R.raw.music_2)
         }
     }
 
@@ -150,6 +148,10 @@ class MainActivity : AppCompatActivity() {
                             recording = null
                             Log.e(TAG, "Video capture ends with error: " +
                                     "${recordEvent.error}")
+                        }
+
+                        if (viewBinding.btAlarm1.isActivated || viewBinding.btAlarm2.isActivated) {
+                            stopAlarm()
                         }
 
                         viewBinding.btHistoric.apply {
@@ -292,13 +294,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startAlarm(soundResource: Int) {
-        val alarmSound = Uri.parse("android.resource://$packageName/$soundResource")
-        ringtone = RingtoneManager.getRingtone(applicationContext, alarmSound)
-        ringtone?.play()
+        if (soundResource != 0) {
+            mediaPlayer = MediaPlayer.create(this, soundResource)
+            mediaPlayer?.isLooping = true
+            mediaPlayer?.start()
+        }
     }
 
     private fun stopAlarm() {
-        ringtone?.stop()
+        mediaPlayer?.apply {
+            if (isPlaying) {
+                stop()
+            }
+            release()
+        }
+        mediaPlayer = null
     }
 
     private fun initDatabase() {
